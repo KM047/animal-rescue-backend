@@ -45,6 +45,10 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
+    rescuedAnimal: {
+      type: Schema.Types.ObjectId,
+      ref: "Animal",
+    },
   },
   { timestamps: true }
 );

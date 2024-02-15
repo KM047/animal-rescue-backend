@@ -4,7 +4,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { response } from "express";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -151,4 +150,18 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 // this is for users all created query
-const getAllAnimalQuery = asyncHandler(async (req, res) => {});
+const getAllAnimalQuery = asyncHandler(async (req, res) => {
+  const user = await Animal.aggregate([
+    {
+      $match: {
+        informant: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Animal rescued fetched successfully"));
+});
+
+export { registerInformant, login, logoutUser, getAllAnimalQuery };
