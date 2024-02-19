@@ -35,8 +35,6 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-      trim: true,
-      lowercase: true,
     },
     avatar: {
       type: String,
@@ -44,10 +42,6 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
-    },
-    rescuedAnimal: {
-      type: Schema.Types.ObjectId,
-      ref: "Animal",
     },
   },
   { timestamps: true }
