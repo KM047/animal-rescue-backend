@@ -27,7 +27,6 @@ router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/refresh-token").post(verifyJWT, refreshAccessToken);
 router.route("/change-password").patch(verifyJWT, changeCurrentUserPassword);
-router.route("/current-user").get(verifyJWT, getCurrentUser);
 
 router
   .route("/create-animal")
