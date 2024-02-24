@@ -79,8 +79,6 @@ const animalRescue = asyncHandler(async (req, res) => {
 
   const { animalId } = req.params;
 
-  // TODO: check if the animal is already rescued or not
-
   if (!isValidObjectId(animalId) && !animalId) {
     throw new ApiError(404, "Invalid animal Identity");
   }
