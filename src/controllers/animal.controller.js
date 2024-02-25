@@ -5,8 +5,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-import { AnimalRescuer } from "../models/animalsRescuer.model.js";
-
 const createAnimal = asyncHandler(async (req, res) => {
   const { animalType, breed, age, gender, healthStatus, location } = req.body;
 
@@ -60,17 +58,13 @@ const createAnimal = asyncHandler(async (req, res) => {
 });
 
 const getAllAnimals = asyncHandler(async (req, res) => {
-  // Extract parameters from request query or set default values
   const { rescueStatus = false, page = 1, limit = 10 } = req.query;
 
-  // Parse page and limit parameters as integers
   const pageNumber = parseInt(page);
   const limitNumber = parseInt(limit);
 
-  // Calculate skip value for pagination
   const skip = (pageNumber - 1) * limitNumber;
 
-  // Define the aggregation pipeline based on the parameters
   const pipeline = [
     {
       $match: {
@@ -85,15 +79,12 @@ const getAllAnimals = asyncHandler(async (req, res) => {
     },
   ];
 
-  // Execute the aggregation query
   const animals = await Animal.aggregate(pipeline);
 
-  // Check if any animals are found
   if (animals.length === 0) {
     throw new ApiError(404, "No animals found or something went wrong.");
   }
 
-  // Send response with paginated animal list
   return res
     .status(200)
     .json(
