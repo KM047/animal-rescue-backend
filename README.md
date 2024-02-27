@@ -83,4 +83,4 @@ This project is a work in progress, and there are plans to enhance it further ba
 
 ## License
 
-This project is licensed under the MIT License - Chai Aur backend, @Hiteshchoudhary and @KM9110
+This project is licensed under the MIT License - Chai Aur backend, @Hiteshchoudhary and @KM9047
