@@ -204,7 +204,7 @@ const changeCurrentOrgPassword = asyncHandler(async (req, res) => {
 
   const isPasswordValid = await org.isPasswordCorrect(oldPassword);
 
-  console.log("isPasswordValid", isPasswordValid);
+  // console.log("isPasswordValid", isPasswordValid);
 
   if (!isPasswordValid) {
     throw new ApiError(400, "Invalid password");
@@ -251,7 +251,7 @@ const changeOrganizationLogo = asyncHandler(async (req, res) => {
 
   try {
     const isOldImageDelete = await deleteOldFileInCloudinary(oldLogo);
-    console.log("isOldImageDelete ", isOldImageDelete);
+    // console.log("isOldImageDelete ", isOldImageDelete);
   } catch (error) {
     console.log("error - ", error);
   }
@@ -276,6 +276,15 @@ const removeTheRescuer = asyncHandler(async (req, res) => {
 
   if (!deletedRescuer) {
     throw new ApiError(400, "Something went wrong while deleting rescuer");
+  }
+
+  try {
+    const isOldImageDelete = await deleteOldFileInCloudinary(
+      deletedRescuer.avatar
+    );
+    // console.log("isOldImageDelete ", isOldImageDelete);
+  } catch (error) {
+    console.log("error - ", error);
   }
 
   return res
@@ -428,9 +437,13 @@ const getAllOrgRescuedAnimals = asyncHandler(async (req, res) => {
     {
       $project: {
         "animalDetails._id": 1,
+        "animalDetails.animalPicture": 1,
         "animalDetails.animalType": 1,
-        "animalDetails.age": 1,
+        "animalDetails.rescueStatus": 1,
+        "animalDetails.createdAt": 1,
+        "animalDetails.updatedAt": 1,
         "animalDetails.location": 1,
+        "animalRescueByOrg._id": 1,
         "animalRescueByOrg.orgName": 1,
         "animalRescueByOrg.location": 1,
       },

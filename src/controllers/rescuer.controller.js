@@ -127,7 +127,7 @@ const changeCurrentRescuerPassword = asyncHandler(async (req, res) => {
 
   const isPasswordValid = await rescuer.isPasswordCorrect(oldPassword);
 
-  console.log("isPasswordValid", isPasswordValid);
+  // console.log("isPasswordValid", isPasswordValid);
 
   if (!isPasswordValid) {
     throw new ApiError(400, "Invalid password");
@@ -187,11 +187,11 @@ const getallAnimalRescued = asyncHandler(async (req, res) => {
     {
       $project: {
         "animalDetails._id": 1,
+        "animalDetails.animalPicture": 1,
         "animalDetails.animalType": 1,
-        "animalDetails.age": 1,
-        "animalDetails.rescueStatus": 1,
         "animalDetails.createdAt": 1,
         "animalDetails.updatedAt": 1,
+        "animalDetails.location": 1,
       },
     },
     {
@@ -227,10 +227,63 @@ const getallAnimalRescued = asyncHandler(async (req, res) => {
   );
 });
 
+const getCurrentRescuer = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, req.rescuer, "Current user fetched successfully")
+    );
+});
+
+const changeRescuersAvatar = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.file?.path;
+
+  if (!avatarLocalPath) {
+    throw new ApiError(401, "Avatar file is missing");
+  }
+  const oldAvatar = req.rescuer.avatar;
+
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+  // console.log(avatar);
+  if (!avatar.url) {
+    throw new ApiError(500, "Something went wrong while uploading avatar");
+  }
+
+  const rescuer = await Rescuer.findByIdAndUpdate(
+    req.rescuer?._id,
+    {
+      $set: {
+        avatar: avatar.url,
+      },
+    },
+    {
+      new: true,
+    }
+  ).select("-password -refreshToken");
+
+  if (!rescuer) {
+    throw new ApiError(500, "Something went wrong or Org not found");
+  }
+
+  try {
+    const isOldImageDelete = await deleteOldFileInCloudinary(oldAvatar);
+    // console.log("isOldImageDelete ", isOldImageDelete);
+  } catch (error) {
+    console.log("error - ", error);
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, rescuer, "Logo updated successfully"));
+});
+
 export {
   loginRescuer,
   animalRescue,
   changeCurrentRescuerPassword,
   logoutRescuer,
   getallAnimalRescued,
+  getCurrentRescuer,
+  changeRescuersAvatar,
 };

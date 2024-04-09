@@ -6,10 +6,13 @@ import { RescueOrg } from "../models/rescueOrganization.model.js";
 import { Rescuer } from "../models/rescuer.model.js";
 
 export const verifyJWT = asyncHandler(async (req, _, next) => {
+  // console.log("req in jwt", req);
   try {
     const token =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
+
+    // console.log({ token });
 
     if (!token) {
       throw new ApiError(401, "Unauthorized request");

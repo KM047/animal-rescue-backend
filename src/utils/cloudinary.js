@@ -32,7 +32,7 @@ const deleteOldFileInCloudinary = async (imageURL) => {
       resource_type: "image",
     },
     (result) => {
-      console.log("Delete result", result);
+      // console.log("Delete result", result);
     }
   );
 
@@ -47,7 +47,7 @@ const deleteOldVideoFileInCloudinary = async (videoURL) => {
       resource_type: "video",
     },
     (result) => {
-      console.log("Delete result", result);
+      // console.log("Delete result", result);
     }
   );
 

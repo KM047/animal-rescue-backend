@@ -1,7 +1,10 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { deleteOldFileInCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteOldFileInCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
@@ -35,6 +38,8 @@ const registerInformant = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(400, "All fields must be required");
   }
+
+  // console.log("req.file ->", req);
 
   let avatarLocalPath = req.file?.path;
 
@@ -79,7 +84,10 @@ const registerInformant = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
+  // console.log({ req });
   const { username, email, password } = req.body;
+
+  // console.log({ username, email, password });
 
   if ((!email && !username) || !password) {
     throw new ApiError(400, "Username or email or password is required.");
@@ -132,6 +140,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
+  // console.log("request for logout", req);
   User.findByIdAndUpdate(
     req.user._id,
     {
@@ -158,6 +167,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const changeCurrentUserPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
+
+  // console.log("req --> ", req);
 
   const user = await User.findById(req.user?._id);
 
@@ -210,7 +221,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
   try {
     const isOldImageDelete = await deleteOldFileInCloudinary(oldAvatar);
-    console.log("isOldImageDelete ", isOldImageDelete);
+    // console.log("isOldImageDelete ", isOldImageDelete);
   } catch (error) {
     console.log("error - ", error);
   }

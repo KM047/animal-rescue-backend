@@ -8,9 +8,11 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const createAnimal = asyncHandler(async (req, res) => {
   const { animalType, breed, age, gender, healthStatus, location } = req.body;
 
+  // console.log(req.body);
+
   if (
     [animalType, breed, age, gender, healthStatus, location].some((field) => {
-      field?.trim() === "" || field.trim() === undefined;
+      field?.trim() === "" || field?.trim() === undefined;
     })
   ) {
     throw new ApiError(400, "All fields are must be required");
@@ -29,12 +31,12 @@ const createAnimal = asyncHandler(async (req, res) => {
   const animalPicture = await uploadOnCloudinary(animalPicturePath);
 
   const animal = await Animal.create({
-    animalType,
-    breed,
-    age,
-    gender,
-    healthStatus,
-    location,
+    animalType: animalType,
+    breed: breed,
+    age: age,
+    gender: gender,
+    healthStatus: healthStatus,
+    location: location,
     animalPicture: animalPicture.url,
     informant: new mongoose.Types.ObjectId(req.user._id),
   });
@@ -49,27 +51,29 @@ const createAnimal = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        { animal },
-        "Animal rescue query successful created."
-      )
+      new ApiResponse(200, animal, "Animal rescue query successful created.")
     );
 });
 
 const getAllAnimals = asyncHandler(async (req, res) => {
-  const { rescueStatus = false, page = 1, limit = 10 } = req.query;
+  const { rescueStatus = false, page, limit = 7 } = req.query;
 
   const pageNumber = parseInt(page);
   const limitNumber = parseInt(limit);
 
+  console.log({ pageNumber: pageNumber, limitNumber: limitNumber });
+
+  // const count = await Animal.countDocuments({ rescueStatus }); // Get total count of documents matching the query
+
+  // const totalPages = Math.ceil(count / limitNumber); // Calculate total number of pages based on the count and limit
+  // const skip = Math.min((pageNumber - 1) * limitNumber, count); // Limit skip value to the size of the database
+
   const skip = (pageNumber - 1) * limitNumber;
 
+  // console.log(skip);
   const pipeline = [
     {
-      $match: {
-        rescueStatus: rescueStatus === "true", // Convert string to boolean
-      },
+      $sort: { createdAt: -1 },
     },
     {
       $skip: skip, // Skip documents based on pagination
@@ -110,4 +114,21 @@ const getAllUnrescuedAnimals = asyncHandler(async (req, res) => {
     );
 });
 
-export { createAnimal, getAllAnimals, getAllUnrescuedAnimals };
+const getAnimalInfo = asyncHandler(async (req, res) => {
+  const { animalId } = req.params;
+
+  // console.log(animalId);
+
+  const animal = await Animal.findById(animalId);
+  // console.log(animal);
+
+  if (!animal) {
+    throw new ApiError(404, "Something went wrong or No animal for rescued ");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, animal, " Animal info find successfully"));
+});
+
+export { createAnimal, getAllAnimals, getAllUnrescuedAnimals, getAnimalInfo };

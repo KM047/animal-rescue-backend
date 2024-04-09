@@ -23,6 +23,7 @@ import animalRouter from "./routes/animal.routes.js";
 import healthcheckRouter from "./routes/healthcheck.routes.js";
 
 app.use("/api/v1/healthcheck", healthcheckRouter);
+app.use("/", healthcheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/orgs", orgRouter);
 app.use("/api/v1/rescuers", rescuerRouter);
