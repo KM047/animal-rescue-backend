@@ -8,7 +8,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const createAnimal = asyncHandler(async (req, res) => {
   const { animalType, breed, age, gender, healthStatus, location } = req.body;
 
-  // console.log(req.body);
 
   if (
     [animalType, breed, age, gender, healthStatus, location].some((field) => {
@@ -56,12 +55,12 @@ const createAnimal = asyncHandler(async (req, res) => {
 });
 
 const getAllAnimals = asyncHandler(async (req, res) => {
-  const { rescueStatus = false, page, limit = 7 } = req.query;
+  const { rescueStatus = false, page, limit = 10 } = req.query;
 
   const pageNumber = parseInt(page);
   const limitNumber = parseInt(limit);
 
-  console.log({ pageNumber: pageNumber, limitNumber: limitNumber });
+  // console.log({ pageNumber: pageNumber, limitNumber: limitNumber });
 
   // const count = await Animal.countDocuments({ rescueStatus }); // Get total count of documents matching the query
 
@@ -72,6 +71,11 @@ const getAllAnimals = asyncHandler(async (req, res) => {
 
   // console.log(skip);
   const pipeline = [
+    {
+      $match: {
+        rescueStatus: rescueStatus === "false",
+      },
+    },
     {
       $sort: { createdAt: -1 },
     },

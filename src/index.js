@@ -14,7 +14,7 @@ connectDB()
     });
 
     app.listen(process.env.PORT || 8001, () => {
-      console.log(`⚙ Server listening on ${process.env.PORT}`);
+      console.log(`⚙ Server listening `);
     });
   })
 
