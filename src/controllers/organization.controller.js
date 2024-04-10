@@ -413,6 +413,11 @@ const getAllOrgRescuers = asyncHandler(async (req, res) => {
 const getAllOrgRescuedAnimals = asyncHandler(async (req, res) => {
   const rescuedAnimalList = await AnimalRescuer.aggregate([
     {
+      $match: {
+        org: new mongoose.Types.ObjectId(req.org?._id), // Convert orgId to ObjectId
+      },
+    },
+    {
       $lookup: {
         from: "rescueorgs",
         localField: "org",
